@@ -7,7 +7,12 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.LayerDrawable;
 import android.media.AudioAttributes;
 import android.media.SoundPool;
 import android.text.TextUtils;
@@ -27,6 +32,7 @@ import com.termux.app.TermuxService;
 import com.termux.shared.termux.settings.properties.TermuxPropertyConstants;
 import com.termux.shared.termux.terminal.io.BellHandler;
 import com.termux.shared.logger.Logger;
+import com.termux.terminal.TerminalColorScheme;
 import com.termux.terminal.TerminalColors;
 import com.termux.terminal.TerminalSession;
 import com.termux.terminal.TerminalSessionClient;
@@ -520,9 +526,23 @@ public class TermuxTerminalSessionActivityClient extends TermuxTerminalSessionCl
     public void updateBackgroundColor() {
         if (!mActivity.isVisible()) return;
         TerminalSession session = mActivity.getCurrentSession();
-        if (session != null && session.getEmulator() != null) {
-            mActivity.getWindow().getDecorView().setBackgroundColor(session.getEmulator().mColors.mCurrentColors[TextStyle.COLOR_INDEX_BACKGROUND]);
+        if (session == null || session.getEmulator() == null) return;
+
+        TerminalColorScheme colorScheme = TerminalColors.COLOR_SCHEME;
+        String backgroundImage = colorScheme.mBackgroundImage;
+
+        if (backgroundImage != null && !backgroundImage.isEmpty()) {
+            File imageFile = new File(backgroundImage);
+            if (imageFile.exists()) {
+                BitmapDrawable bgDrawable = new BitmapDrawable(mActivity.getResources(), BitmapFactory.decodeFile(imageFile.getAbsolutePath()));
+                ColorDrawable maskDrawable = new ColorDrawable(colorScheme.mDefaultColors[TextStyle.COLOR_INDEX_BACKGROUND]);
+                maskDrawable.setAlpha((int) (colorScheme.mBackgroundAlpha * 255));
+                LayerDrawable layerDrawable = new LayerDrawable(new Drawable[]{bgDrawable, maskDrawable});
+                mActivity.getWindow().getDecorView().setBackground(layerDrawable);
+                return;
+            }
         }
+        mActivity.getWindow().getDecorView().setBackgroundColor(colorScheme.mDefaultColors[TextStyle.COLOR_INDEX_BACKGROUND]);
     }
 
 }

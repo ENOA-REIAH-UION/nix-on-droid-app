@@ -61,6 +61,10 @@ public final class TerminalColorScheme {
 
     public final int[] mDefaultColors = new int[TextStyle.NUM_INDEXED_COLORS];
 
+    public String mBackgroundImage;
+
+    public float mBackgroundAlpha = 0.8f;
+
     public TerminalColorScheme() {
         reset();
     }
@@ -75,6 +79,19 @@ public final class TerminalColorScheme {
         for (Map.Entry<Object, Object> entries : props.entrySet()) {
             String key = (String) entries.getKey();
             String value = (String) entries.getValue();
+
+            if (key.equals("background-image")) {
+                mBackgroundImage = value;
+                continue;
+            } else if (key.equals("background-alpha")) {
+                try {
+                    mBackgroundAlpha = Float.parseFloat(value);
+                } catch (NumberFormatException e) {
+                    throw new IllegalArgumentException("Property '" + key + "' has invalid value: '" + value + "'");
+                }
+                continue;
+            }
+
             int colorIndex;
 
             if (key.equals("foreground")) {
