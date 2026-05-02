@@ -42,7 +42,7 @@ android {
         applicationId "com.termux"
         applicationIdSuffix ".nix"
         versionCode 188037
-        versionName "0.118.0_v0.3.7_nix"
+        versionName "0.118.0-v0.3.7-nix"
         // fdroid checkupdates looks for literal versionCode/versionName,
         // can't get fancy with these and use string interpolation and similar
         ndk {
@@ -85,9 +85,11 @@ android {
         */
         splits {
             abi {
+                enable ((gradle.startParameter.taskNames.any { it.contains("Debug") } && splitAPKsForDebugBuilds == "1") ||
+                    (gradle.startParameter.taskNames.any { it.contains("Release") } && splitAPKsForReleaseBuilds == "1"))
                 reset ()
-                include 'arm64-v8a'
-                universalApk false
+                include 'x86', 'x86_64', 'armeabi-v7a', 'arm64-v8a'
+                universalApk true
             }
         }
     }
