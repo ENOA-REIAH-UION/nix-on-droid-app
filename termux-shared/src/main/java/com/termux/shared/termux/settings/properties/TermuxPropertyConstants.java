@@ -332,6 +332,13 @@ public final class TermuxPropertyConstants {
     public static final String KEY_EXTRA_KEYS_STYLE =  "extra-keys-style"; // Default: "extra-keys-style"
     public static final String DEFAULT_IVALUE_EXTRA_KEYS_STYLE = "default";
 
+    public static final String KEY_EXTRA_KEYS_BUTTON_TEXT_COLOR = "extra-keys-button-text-color";
+    public static final String KEY_EXTRA_KEYS_BUTTON_ACTIVE_TEXT_COLOR = "extra-keys-button-active-text-color";
+    public static final String KEY_EXTRA_KEYS_BUTTON_BACKGROUND_COLOR = "extra-keys-button-background-color";
+    public static final String KEY_EXTRA_KEYS_BUTTON_ACTIVE_BACKGROUND_COLOR = "extra-keys-button-active-background-color";
+    public static final String KEY_EXTRA_KEYS_BUTTON_AREA_BACKGROUND_COLOR = "extra-keys-button-area-background-color";
+    public static final String KEY_EXTRA_KEYS_BUTTON_GAP = "extra-keys-button-gap";
+
 
 
     /** Defines the key for {@link NightMode}. */
@@ -428,6 +435,12 @@ public final class TermuxPropertyConstants {
         KEY_DEFAULT_WORKING_DIRECTORY,
         KEY_EXTRA_KEYS,
         KEY_EXTRA_KEYS_STYLE,
+        KEY_EXTRA_KEYS_BUTTON_TEXT_COLOR,
+        KEY_EXTRA_KEYS_BUTTON_ACTIVE_TEXT_COLOR,
+        KEY_EXTRA_KEYS_BUTTON_BACKGROUND_COLOR,
+        KEY_EXTRA_KEYS_BUTTON_ACTIVE_BACKGROUND_COLOR,
+        KEY_EXTRA_KEYS_BUTTON_AREA_BACKGROUND_COLOR,
+        KEY_EXTRA_KEYS_BUTTON_GAP,
         KEY_NIGHT_MODE,
         KEY_SOFT_KEYBOARD_TOGGLE_BEHAVIOUR,
         KEY_VOLUME_KEYS_BEHAVIOUR

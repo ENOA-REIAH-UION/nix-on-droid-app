@@ -4,4 +4,5 @@
     <attr name="extraKeysButtonActiveTextColor" format="reference" />
     <attr name="extraKeysButtonBackgroundColor" format="reference" />
     <attr name="extraKeysButtonActiveBackgroundColor" format="reference" />
+    <attr name="extraKeysButtonAreaBackgroundColor" format="reference" />
 </resources>

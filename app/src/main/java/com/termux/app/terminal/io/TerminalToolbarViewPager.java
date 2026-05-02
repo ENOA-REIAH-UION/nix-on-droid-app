@@ -1,5 +1,6 @@
 package com.termux.app.terminal.io;
 
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,6 +47,24 @@ public class TerminalToolbarViewPager {
                 ExtraKeysView extraKeysView = (ExtraKeysView) layout;
                 extraKeysView.setExtraKeysViewClient(mActivity.getTermuxTerminalExtraKeys());
                 extraKeysView.setButtonTextAllCaps(mActivity.getProperties().shouldExtraKeysTextBeAllCaps());
+
+                String textColorStr = mActivity.getProperties().getExtraKeysButtonTextColor();
+                String activeTextColorStr = mActivity.getProperties().getExtraKeysButtonActiveTextColor();
+                String bgColorStr = mActivity.getProperties().getExtraKeysButtonBackgroundColor();
+                String activeBgColorStr = mActivity.getProperties().getExtraKeysButtonActiveBackgroundColor();
+                String areaBgColorStr = mActivity.getProperties().getExtraKeysButtonAreaBackgroundColor();
+                String gapStr = mActivity.getProperties().getExtraKeysButtonGap();
+                int textColor = textColorStr != null ? Color.parseColor(textColorStr) : ExtraKeysView.DEFAULT_BUTTON_TEXT_COLOR;
+                int activeTextColor = activeTextColorStr != null ? Color.parseColor(activeTextColorStr) : ExtraKeysView.DEFAULT_BUTTON_ACTIVE_TEXT_COLOR;
+                int bgColor = bgColorStr != null ? Color.parseColor(bgColorStr) : ExtraKeysView.DEFAULT_BUTTON_BACKGROUND_COLOR;
+                int activeBgColor = activeBgColorStr != null ? Color.parseColor(activeBgColorStr) : ExtraKeysView.DEFAULT_BUTTON_ACTIVE_BACKGROUND_COLOR;
+                int areaBgColor = areaBgColorStr != null ? Color.parseColor(areaBgColorStr) : ExtraKeysView.DEFAULT_BUTTON_AREA_BACKGROUND_COLOR;
+                int gap = gapStr != null ? Integer.parseInt(gapStr) : ExtraKeysView.DEFAULT_BUTTON_GAP;
+                extraKeysView.setButtonColors(textColor, activeTextColor, bgColor, activeBgColor);
+                extraKeysView.setButtonAreaBackgroundColor(areaBgColor);
+                extraKeysView.setButtonGap(gap);
+                collection.setBackgroundColor(areaBgColor);
+
                 mActivity.setExtraKeysView(extraKeysView);
                 extraKeysView.reload(mActivity.getTermuxTerminalExtraKeys().getExtraKeysInfo(),
                     mActivity.getTerminalToolbarDefaultHeight());

@@ -2,6 +2,7 @@ package com.termux.shared.termux.extrakeys;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
@@ -33,6 +34,7 @@ import androidx.annotation.Nullable;
 
 import com.google.android.material.button.MaterialButton;
 import com.termux.shared.R;
+import com.termux.shared.termux.settings.properties.TermuxPropertyConstants;
 import com.termux.shared.termux.terminal.io.TerminalExtraKeys;
 import com.termux.shared.theme.ThemeUtils;
 
@@ -117,6 +119,8 @@ public final class ExtraKeysView extends GridLayout {
     public static final int ATTR_BUTTON_BACKGROUND_COLOR = R.attr.extraKeysButtonBackgroundColor;
     /** Defines the default value for {@link #mButtonActiveBackgroundColor} defined by current theme. */
     public static final int ATTR_BUTTON_ACTIVE_BACKGROUND_COLOR = R.attr.extraKeysButtonActiveBackgroundColor;
+    /** Defines the default value for {@link #mButtonAreaBackgroundColor} defined by current theme. */
+    public static final int ATTR_BUTTON_AREA_BACKGROUND_COLOR = R.attr.extraKeysButtonAreaBackgroundColor;
 
     /** Defines the default fallback value for {@link #mButtonTextColor} if {@link #ATTR_BUTTON_TEXT_COLOR} is undefined. */
     public static final int DEFAULT_BUTTON_TEXT_COLOR = 0xFFFFFFFF;
@@ -126,6 +130,10 @@ public final class ExtraKeysView extends GridLayout {
     public static final int DEFAULT_BUTTON_BACKGROUND_COLOR = 0x00000000;
     /** Defines the default fallback value for {@link #mButtonActiveBackgroundColor} if {@link #ATTR_BUTTON_ACTIVE_BACKGROUND_COLOR} is undefined. */
     public static final int DEFAULT_BUTTON_ACTIVE_BACKGROUND_COLOR = 0xFF7F7F7F;
+    /** Defines the default fallback value for {@link #mButtonAreaBackgroundColor} if {@link #ATTR_BUTTON_AREA_BACKGROUND_COLOR} is undefined. */
+    public static final int DEFAULT_BUTTON_AREA_BACKGROUND_COLOR = Color.BLACK;
+    /** Defines the default gap between buttons in dp if {@link #mButtonGap} is undefined. */
+    public static final int DEFAULT_BUTTON_GAP = 8;
 
 
 
@@ -176,9 +184,15 @@ public final class ExtraKeysView extends GridLayout {
     /** The background color for the extra keys button when its active. Defaults to
      * {@link #DEFAULT_BUTTON_ACTIVE_BACKGROUND_COLOR}. */
     protected int mButtonActiveBackgroundColor;
+    /** The background color for the extra keys button area. Defaults to
+     * {@link #DEFAULT_BUTTON_AREA_BACKGROUND_COLOR}. */
+    protected int mButtonAreaBackgroundColor;
 
     /** Defines whether text for the extra keys button should be all capitalized automatically. */
     protected boolean mButtonTextAllCaps = true;
+
+    /** The gap between extra keys buttons in dp. Defaults to {@link #DEFAULT_BUTTON_GAP}. */
+    protected int mButtonGap;
 
 
     /**
@@ -221,8 +235,20 @@ public final class ExtraKeysView extends GridLayout {
             ThemeUtils.getSystemAttrColor(context, ATTR_BUTTON_BACKGROUND_COLOR, DEFAULT_BUTTON_BACKGROUND_COLOR),
             ThemeUtils.getSystemAttrColor(context, ATTR_BUTTON_ACTIVE_BACKGROUND_COLOR, DEFAULT_BUTTON_ACTIVE_BACKGROUND_COLOR));
 
+        mButtonAreaBackgroundColor = ThemeUtils.getSystemAttrColor(context, ATTR_BUTTON_AREA_BACKGROUND_COLOR, DEFAULT_BUTTON_AREA_BACKGROUND_COLOR);
+
+        mButtonGap = DEFAULT_BUTTON_GAP;
+
         setLongPressTimeout(ViewConfiguration.getLongPressTimeout());
         setLongPressRepeatDelay(DEFAULT_LONG_PRESS_REPEAT_DELAY);
+
+        setBackgroundColor(mButtonAreaBackgroundColor);
+    }
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        setBackgroundColor(mButtonAreaBackgroundColor);
     }
 
 
@@ -327,9 +353,30 @@ public final class ExtraKeysView extends GridLayout {
         mButtonActiveBackgroundColor = buttonActiveBackgroundColor;
     }
 
+    /** Get {@link #mButtonAreaBackgroundColor}. */
+    public int getButtonAreaBackgroundColor() {
+        return mButtonAreaBackgroundColor;
+    }
+
+    /** Set {@link #mButtonAreaBackgroundColor}. */
+    public void setButtonAreaBackgroundColor(int buttonAreaBackgroundColor) {
+        mButtonAreaBackgroundColor = buttonAreaBackgroundColor;
+        setBackgroundColor(buttonAreaBackgroundColor);
+    }
+
     /** Set {@link #mButtonTextAllCaps}. */
     public void setButtonTextAllCaps(boolean buttonTextAllCaps) {
         mButtonTextAllCaps = buttonTextAllCaps;
+    }
+
+    /** Get {@link #mButtonGap}. */
+    public int getButtonGap() {
+        return mButtonGap;
+    }
+
+    /** Set {@link #mButtonGap}. */
+    public void setButtonGap(int buttonGap) {
+        mButtonGap = buttonGap;
     }
 
 
@@ -413,6 +460,7 @@ public final class ExtraKeysView extends GridLayout {
                 button.setTextColor(mButtonTextColor);
                 button.setAllCaps(mButtonTextAllCaps);
                 button.setPadding(0, 0, 0, 0);
+                button.setBackgroundColor(mButtonBackgroundColor);
 
                 button.setOnClickListener(view -> {
                     performExtraKeyButtonHapticFeedback(view, buttonInfo, button);
@@ -476,7 +524,10 @@ public final class ExtraKeysView extends GridLayout {
                 } else {
                     param.height = 0;
                 }
-                param.setMargins(0, 0, 0, 0);
+                int gapPx = (int) (mButtonGap * getResources().getDisplayMetrics().density);
+                boolean isLastColumn = (col == buttons[row].length - 1);
+                int rightMargin = isLastColumn ? 0 : gapPx;
+                param.setMargins(0, 0, rightMargin, 0);
                 param.columnSpec = GridLayout.spec(col, GridLayout.FILL, 1.f);
                 param.rowSpec = GridLayout.spec(row, GridLayout.FILL, 1.f);
                 button.setLayoutParams(param);

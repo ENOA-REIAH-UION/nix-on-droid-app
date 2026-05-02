@@ -294,6 +294,13 @@ public abstract class TermuxSharedProperties {
                 return (String) getExtraKeysInternalPropertyValueFromValue(value);
             case TermuxPropertyConstants.KEY_EXTRA_KEYS_STYLE:
                 return (String) getExtraKeysStyleInternalPropertyValueFromValue(value);
+            case TermuxPropertyConstants.KEY_EXTRA_KEYS_BUTTON_TEXT_COLOR:
+            case TermuxPropertyConstants.KEY_EXTRA_KEYS_BUTTON_ACTIVE_TEXT_COLOR:
+            case TermuxPropertyConstants.KEY_EXTRA_KEYS_BUTTON_BACKGROUND_COLOR:
+            case TermuxPropertyConstants.KEY_EXTRA_KEYS_BUTTON_ACTIVE_BACKGROUND_COLOR:
+            case TermuxPropertyConstants.KEY_EXTRA_KEYS_BUTTON_AREA_BACKGROUND_COLOR:
+            case TermuxPropertyConstants.KEY_EXTRA_KEYS_BUTTON_GAP:
+                return (String) value;
             case TermuxPropertyConstants.KEY_NIGHT_MODE:
                 return (String) getNightModeInternalPropertyValueFromValue(value);
             case TermuxPropertyConstants.KEY_SOFT_KEYBOARD_TOGGLE_BEHAVIOUR:
@@ -656,6 +663,30 @@ public abstract class TermuxSharedProperties {
 
     public float getTerminalToolbarHeightScaleFactor() {
         return (float) getInternalPropertyValue(TermuxPropertyConstants.KEY_TERMINAL_TOOLBAR_HEIGHT_SCALE_FACTOR, true);
+    }
+
+    public String getExtraKeysButtonTextColor() {
+        return (String) getInternalPropertyValue(TermuxPropertyConstants.KEY_EXTRA_KEYS_BUTTON_TEXT_COLOR, true);
+    }
+
+    public String getExtraKeysButtonActiveTextColor() {
+        return (String) getInternalPropertyValue(TermuxPropertyConstants.KEY_EXTRA_KEYS_BUTTON_ACTIVE_TEXT_COLOR, true);
+    }
+
+    public String getExtraKeysButtonBackgroundColor() {
+        return (String) getInternalPropertyValue(TermuxPropertyConstants.KEY_EXTRA_KEYS_BUTTON_BACKGROUND_COLOR, true);
+    }
+
+    public String getExtraKeysButtonActiveBackgroundColor() {
+        return (String) getInternalPropertyValue(TermuxPropertyConstants.KEY_EXTRA_KEYS_BUTTON_ACTIVE_BACKGROUND_COLOR, true);
+    }
+
+    public String getExtraKeysButtonAreaBackgroundColor() {
+        return (String) getInternalPropertyValue(TermuxPropertyConstants.KEY_EXTRA_KEYS_BUTTON_AREA_BACKGROUND_COLOR, true);
+    }
+
+    public String getExtraKeysButtonGap() {
+        return (String) getInternalPropertyValue(TermuxPropertyConstants.KEY_EXTRA_KEYS_BUTTON_GAP, true);
     }
 
     public boolean isBackKeyTheEscapeKey() {
