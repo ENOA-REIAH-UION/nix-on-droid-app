@@ -18,6 +18,7 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.graphics.Color;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -45,6 +46,7 @@ import com.termux.app.activities.SettingsActivity;
 import com.termux.shared.termux.crash.TermuxCrashUtils;
 import com.termux.shared.termux.settings.preferences.TermuxAppSharedPreferences;
 import com.termux.app.terminal.TermuxSessionsListViewController;
+import com.termux.app.terminal.SessionMenuPopupWindow;
 import com.termux.app.terminal.io.TerminalToolbarViewPager;
 import com.termux.app.terminal.TermuxTerminalViewClient;
 import com.termux.shared.termux.extrakeys.ExtraKeysView;
@@ -138,6 +140,11 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
      * The termux sessions list controller.
      */
     TermuxSessionsListViewController mTermuxSessionListViewController;
+
+    /**
+     * The session menu popup window for quick session switching.
+     */
+    SessionMenuPopupWindow mSessionMenuPopupWindow;
 
     /**
      * The {@link TermuxActivity} broadcast receiver for various things like terminal style configuration changes.
@@ -364,6 +371,11 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         } catch (Exception e) {
             // ignore.
         }
+
+        if (mSessionMenuPopupWindow != null) {
+            mSessionMenuPopupWindow.dismiss();
+            mSessionMenuPopupWindow = null;
+        }
     }
 
     @Override
@@ -512,6 +524,9 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         mTermuxTerminalExtraKeys = new TermuxTerminalExtraKeys(this, mTerminalView,
             mTermuxTerminalViewClient, mTermuxTerminalSessionActivityClient);
 
+        // Initialize session menu popup
+        mSessionMenuPopupWindow = new SessionMenuPopupWindow(this);
+
         final ViewPager terminalToolbarViewPager = getTerminalToolbarViewPager();
         if (mPreferences.shouldShowTerminalToolbar()) terminalToolbarViewPager.setVisibility(View.VISIBLE);
 
@@ -526,6 +541,39 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 
         terminalToolbarViewPager.setAdapter(new TerminalToolbarViewPager.PageAdapter(this, savedTextInput));
         terminalToolbarViewPager.addOnPageChangeListener(new TerminalToolbarViewPager.OnPageChangeListener(this, terminalToolbarViewPager));
+
+        // Add gesture detection for session menu popup on ViewPager
+        setupSessionMenuGestureDetection(terminalToolbarViewPager);
+    }
+
+    private void setupSessionMenuGestureDetection(ViewPager viewPager) {
+        final int MIN_SWIPE_DISTANCE_DP = 60;
+        final float[] initialX = {0};
+
+        viewPager.setOnTouchListener((v, event) -> {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    initialX[0] = event.getX();
+                    return false;
+
+                case MotionEvent.ACTION_UP:
+                    float finalX = event.getX();
+                    float deltaX = finalX - initialX[0];
+                    int minSwipeDistancePx = (int) (MIN_SWIPE_DISTANCE_DP * v.getResources().getDisplayMetrics().density);
+
+                    // Only detect rightward swipe on first page (ExtraKeysView page)
+                    if (viewPager.getCurrentItem() == 0 && deltaX > minSwipeDistancePx) {
+                        if (mSessionMenuPopupWindow != null) {
+                            mSessionMenuPopupWindow.show();
+                        }
+                        return true;
+                    }
+                    return false;
+
+                default:
+                    return false;
+            }
+        });
     }
 
     private void setTerminalToolbarHeight() {
@@ -858,6 +906,9 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 
     public void termuxSessionListNotifyUpdated() {
         mTermuxSessionListViewController.notifyDataSetChanged();
+        if (mSessionMenuPopupWindow != null) {
+            mSessionMenuPopupWindow.updateSessions();
+        }
     }
 
     public boolean isVisible() {
